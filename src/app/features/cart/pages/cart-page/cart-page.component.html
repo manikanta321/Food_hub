@@ -1,0 +1,129 @@
+<div class="cart-page content-container">
+  <header class="cart-page__header">
+    <div>
+      <p>Fresh choices, ready when you are</p>
+      <h1>Your Cart</h1>
+    </div>
+    @if (!cart.isEmpty()) {
+      <a routerLink="/home" fragment="todays-salads">Add more salads</a>
+    }
+  </header>
+
+  <p class="visually-hidden" aria-live="polite">
+    {{ cart.announcement() }}
+  </p>
+
+  @if (cart.recoveryNotice()) {
+    <aside class="recovery-notice" role="status">
+      <span aria-hidden="true">i</span>
+      <p>
+        We couldn't restore your saved cart. You can continue with a fresh cart.
+      </p>
+      <button
+        type="button"
+        aria-label="Dismiss cart recovery message"
+        (click)="cart.dismissRecoveryNotice()"
+      >
+        ×
+      </button>
+    </aside>
+  }
+
+  @if (!cart.ready()) {
+    <section class="cart-loading" role="status" aria-live="polite">
+      <span aria-hidden="true"></span>
+      <div>
+        <h2>Restoring your cart</h2>
+        <p>Checking today's freshest salad details…</p>
+      </div>
+    </section>
+  } @else if (cart.isEmpty()) {
+    <section class="empty-cart">
+      <span class="empty-cart__icon" aria-hidden="true">♡</span>
+      <h2>Your cart is empty</h2>
+      <p>Choose a fresh salad and it will appear here.</p>
+      <a routerLink="/home" fragment="todays-salads">Browse Today's Salads</a>
+    </section>
+  } @else {
+    <div class="cart-layout">
+      <section class="cart-items" aria-labelledby="cart-items-heading">
+        <div class="cart-items__heading">
+          <h2 id="cart-items-heading">Your selections</h2>
+          <p>
+            {{ cart.totals().itemCount }}
+            {{ cart.totals().itemCount === 1 ? 'item' : 'items' }}
+          </p>
+        </div>
+
+        <ul>
+          @for (item of cart.items(); track item.salad.id) {
+            <li>
+              <app-cart-line
+                [item]="item"
+                (increase)="cart.increaseQuantity(item.salad.id)"
+                (decrease)="cart.decreaseQuantity(item.salad.id)"
+                (remove)="cart.removeItem(item.salad.id)"
+              />
+            </li>
+          }
+        </ul>
+      </section>
+
+      <aside class="price-summary" aria-labelledby="summary-heading">
+        <h2 id="summary-heading">Price summary</h2>
+        <dl>
+          <div>
+            <dt>Subtotal</dt>
+            <dd>
+              {{
+                cart.totals().subtotalPaise / 100
+                  | currency: 'INR' : 'symbol' : '1.0-0'
+              }}
+            </dd>
+          </div>
+          <div>
+            <dt>Delivery</dt>
+            <dd>
+              {{
+                cart.totals().deliveryChargePaise / 100
+                  | currency: 'INR' : 'symbol' : '1.0-0'
+              }}
+            </dd>
+          </div>
+          <div class="price-summary__total">
+            <dt>Total</dt>
+            <dd>
+              {{
+                cart.totals().totalPaise / 100
+                  | currency: 'INR' : 'symbol' : '1.0-0'
+              }}
+            </dd>
+          </div>
+        </dl>
+
+        @if (cart.hasUnavailableItems()) {
+          <p class="price-summary__warning">
+            Remove unavailable items before checkout.
+          </p>
+        }
+
+        @if (cart.canCheckout()) {
+          <a class="price-summary__checkout" routerLink="/checkout">
+            Proceed to Checkout
+          </a>
+        } @else {
+          <button type="button" disabled aria-describedby="checkout-note">
+            Proceed to Checkout
+          </button>
+        }
+        <p id="checkout-note" class="price-summary__note">
+          {{
+            cart.hasUnavailableItems()
+              ? 'Remove unavailable items before checkout.'
+              : 'Review your cart before checkout.'
+          }}
+        </p>
+      </aside>
+    </div>
+  }
+</div>

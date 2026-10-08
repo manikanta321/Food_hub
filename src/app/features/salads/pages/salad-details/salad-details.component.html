@@ -1,0 +1,132 @@
+<div class="details-page content-container">
+  <a class="back-link" routerLink="/home" fragment="todays-salads">
+    <span aria-hidden="true">←</span>
+    Back to today's salads
+  </a>
+
+  @if (detailsState() === 'loading') {
+    <section class="details-loading" role="status" aria-live="polite">
+      <h1 class="visually-hidden">Loading salad details</h1>
+      <span class="details-loading__image" aria-hidden="true"></span>
+      <div class="details-loading__content" aria-hidden="true">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </section>
+  } @else if (detailsState() === 'error') {
+    <section class="details-message" role="alert">
+      <span class="details-message__icon" aria-hidden="true">!</span>
+      <h1>We couldn't load this salad.</h1>
+      <p>Please check your connection and try again.</p>
+      <div class="details-message__actions">
+        <button type="button" (click)="tryAgain()">Try Again</button>
+        <a routerLink="/home">Back to Home</a>
+      </div>
+    </section>
+  } @else if (detailsState() === 'not-found') {
+    <section class="details-message">
+      <span class="details-message__icon" aria-hidden="true">?</span>
+      <h1>Salad not found</h1>
+      <p>This salad may no longer be on today's menu.</p>
+      <a class="details-message__primary-link" routerLink="/home">
+        Back to Home
+      </a>
+    </section>
+  } @else if (salad(); as currentSalad) {
+    <article class="salad-details">
+      <div class="salad-details__visual">
+        <img
+          [ngSrc]="currentSalad.image.url"
+          [alt]="currentSalad.image.alt"
+          width="1024"
+          height="768"
+          priority
+        />
+        <span
+          class="availability"
+          [class.availability--unavailable]="!currentSalad.available"
+        >
+          <span aria-hidden="true"></span>
+          {{
+            currentSalad.available ? 'Available today' : 'Unavailable today'
+          }}
+        </span>
+      </div>
+
+      <div class="salad-details__content">
+        <p class="salad-details__eyebrow">HealthyBowl favourite</p>
+        <div class="salad-details__heading">
+          <h1>{{ currentSalad.name }}</h1>
+          <p>
+            {{
+              currentSalad.pricePaise / 100
+                | currency: 'INR' : 'symbol' : '1.0-0'
+            }}
+          </p>
+        </div>
+
+        <p class="salad-details__description">
+          {{ currentSalad.description }}
+        </p>
+
+        <section class="ingredients" aria-labelledby="ingredients-heading">
+          <h2 id="ingredients-heading">What's inside</h2>
+          <ul>
+            @for (ingredient of currentSalad.ingredients; track ingredient) {
+              <li>
+                <span aria-hidden="true">✓</span>
+                {{ ingredient }}
+              </li>
+            }
+          </ul>
+        </section>
+
+        <section class="order-choice" aria-labelledby="quantity-heading">
+          <div class="order-choice__header">
+            <div>
+              <h2 id="quantity-heading">Quantity</h2>
+              <p>Choose up to {{ maximumQuantity }} bowls</p>
+            </div>
+            <app-quantity-selector
+              [productName]="currentSalad.name"
+              [quantity]="quantity()"
+              [max]="maximumQuantity"
+              [disabled]="!currentSalad.available"
+              (decrease)="decreaseQuantity()"
+              (increase)="increaseQuantity()"
+            />
+          </div>
+
+          <div class="order-choice__summary">
+            <span>Selected total</span>
+            <strong>
+              {{
+                selectedTotalPaise() / 100
+                  | currency: 'INR' : 'symbol' : '1.0-0'
+              }}
+            </strong>
+          </div>
+
+          <button
+            class="add-button"
+            type="button"
+            [disabled]="!currentSalad.available"
+            (click)="addToCart(currentSalad)"
+            [attr.aria-describedby]="'cart-phase-message'"
+          >
+            Add {{ quantity() }} to Cart
+          </button>
+          <p id="cart-phase-message" class="order-choice__note">
+            {{
+              currentSalad.available
+                ? 'Adds your selected quantity and opens the cart.'
+                : 'This salad cannot be ordered today.'
+            }}
+          </p>
+        </section>
+      </div>
+    </article>
+  }
+</div>

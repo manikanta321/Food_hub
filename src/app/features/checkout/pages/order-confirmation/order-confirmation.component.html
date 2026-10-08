@@ -1,0 +1,82 @@
+<div class="confirmation-page content-container">
+  @if (state() === 'loading') {
+    <section class="confirmation-state" role="status" aria-live="polite">
+      <span class="confirmation-state__loader" aria-hidden="true"></span>
+      <h1>Loading your order</h1>
+      <p>Confirming the latest order details…</p>
+    </section>
+  } @else if (state() === 'error') {
+    <section class="confirmation-state" role="alert">
+      <span class="confirmation-state__symbol" aria-hidden="true">!</span>
+      <h1>We couldn't load your order</h1>
+      <p>Please try again. Your order information is stored for this session.</p>
+      <div class="confirmation-state__actions">
+        <button type="button" (click)="tryAgain()">Try Again</button>
+        <a routerLink="/home">Back to Home</a>
+      </div>
+    </section>
+  } @else if (state() === 'not-found') {
+    <section class="confirmation-state">
+      <span class="confirmation-state__symbol" aria-hidden="true">?</span>
+      <h1>Order not found</h1>
+      <p>This order is not available in your current browser session.</p>
+      <a class="primary-link" routerLink="/home">Back to Home</a>
+    </section>
+  } @else if (order(); as currentOrder) {
+    <article class="confirmation-card" role="status">
+      <span class="confirmation-card__check" aria-hidden="true">✓</span>
+      <p class="confirmation-card__eyebrow">Thank you for your order</p>
+      <h1>Order Placed Successfully!</h1>
+      <p class="confirmation-card__message">
+        Your healthy salads will be delivered at
+      </p>
+      <p class="confirmation-card__slot">
+        {{
+          currentOrder.deliverySlot.startsAt
+            | date: 'h:mm a' : '+0530'
+        }}
+        –
+        {{ currentOrder.deliverySlot.endsAt | date: 'h:mm a' : '+0530' }}
+      </p>
+
+      <dl>
+        <div>
+          <dt>Order ID</dt>
+          <dd>#{{ currentOrder.id }}</dd>
+        </div>
+        <div>
+          <dt>Delivering to</dt>
+          <dd>
+            {{ currentOrder.deliveryAddress.apartmentName }},
+            {{ currentOrder.deliveryAddress.block }}-{{
+              currentOrder.deliveryAddress.flatNumber
+            }}
+          </dd>
+        </div>
+        <div>
+          <dt>Payment</dt>
+          <dd>{{ currentOrder.paymentMethod === 'CASH' ? 'Cash' : 'UPI' }}</dd>
+        </div>
+        <div class="confirmation-card__total">
+          <dt>Total</dt>
+          <dd>
+            {{
+              currentOrder.totalPaise / 100
+                | currency: 'INR' : 'symbol' : '1.0-0'
+            }}
+          </dd>
+        </div>
+      </dl>
+
+      <div class="confirmation-card__actions">
+        <button type="button" disabled aria-describedby="orders-phase-note">
+          View Orders
+        </button>
+        <a routerLink="/home">Back to Home</a>
+      </div>
+      <p id="orders-phase-note" class="confirmation-card__note">
+        Order history opens in Phase 7.
+      </p>
+    </article>
+  }
+</div>

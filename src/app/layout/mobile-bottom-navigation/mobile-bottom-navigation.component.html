@@ -1,0 +1,39 @@
+<nav class="bottom-navigation" aria-label="Primary navigation">
+  <a
+    class="bottom-navigation__link"
+    routerLink="/home"
+    routerLinkActive="bottom-navigation__link--active"
+    [routerLinkActiveOptions]="{ exact: true }"
+    ariaCurrentWhenActive="page"
+  >
+    <svg aria-hidden="true" viewBox="0 0 24 24">
+      <path
+        d="M3 10.8 12 3l9 7.8v9.45c0 .41-.34.75-.75.75H15v-6H9v6H3.75a.75.75 0 0 1-.75-.75V10.8Z"
+      />
+    </svg>
+    <span>Home</span>
+  </a>
+  <a
+    class="bottom-navigation__link"
+    routerLink="/cart"
+    routerLinkActive="bottom-navigation__link--active"
+    ariaCurrentWhenActive="page"
+  >
+    <span class="bottom-navigation__icon">
+      <svg aria-hidden="true" viewBox="0 0 24 24">
+        <path
+          d="M3 4h2l1.8 10.1a2 2 0 0 0 2 1.65h7.95a2 2 0 0 0 1.95-1.55L20 8H6.1M9 20a1 1 0 1 0 0-2 1 1 0 0 0 0 2Zm8 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
+        />
+      </svg>
+      @if (cart.itemCount() > 0) {
+        <span
+          class="bottom-navigation__count"
+          [attr.aria-label]="cart.itemCount() + ' items in cart'"
+        >
+          {{ cart.itemCount() }}
+        </span>
+      }
+    </span>
+    <span>Cart</span>
+  </a>
+</nav>

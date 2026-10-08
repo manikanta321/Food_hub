@@ -1,0 +1,60 @@
+<article class="cart-line">
+  <a
+    class="cart-line__image"
+    [routerLink]="['/salads', item().salad.id]"
+    [attr.aria-label]="'View ' + item().salad.name"
+  >
+    <img
+      [ngSrc]="item().salad.image.url"
+      [alt]="item().salad.image.alt"
+      width="320"
+      height="240"
+    />
+  </a>
+
+  <div class="cart-line__details">
+    <div>
+      <h2>
+        <a [routerLink]="['/salads', item().salad.id]">
+          {{ item().salad.name }}
+        </a>
+      </h2>
+      <p class="cart-line__unit-price">
+        {{
+          item().salad.pricePaise / 100
+            | currency: 'INR' : 'symbol' : '1.0-0'
+        }}
+        each
+      </p>
+      @if (!item().salad.available) {
+        <p class="cart-line__unavailable" role="status">Unavailable today</p>
+      }
+    </div>
+
+    <button
+      class="cart-line__remove"
+      type="button"
+      (click)="remove.emit()"
+      [attr.aria-label]="'Remove ' + item().salad.name + ' from cart'"
+    >
+      Remove
+    </button>
+  </div>
+
+  <div class="cart-line__controls">
+    <app-quantity-selector
+      [productName]="item().salad.name"
+      [quantity]="item().quantity"
+      [max]="20"
+      [disabled]="!item().salad.available"
+      (decrease)="decrease.emit()"
+      (increase)="increase.emit()"
+    />
+    <p>
+      <span>Line total</span>
+      <strong>
+        {{ lineTotalPaise() / 100 | currency: 'INR' : 'symbol' : '1.0-0' }}
+      </strong>
+    </p>
+  </div>
+</article>

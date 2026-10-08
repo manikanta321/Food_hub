@@ -1,0 +1,23 @@
+<div class="quantity-selector" role="group" [attr.aria-label]="'Quantity for ' + productName()">
+  <button
+    type="button"
+    [disabled]="disabled() || quantity() <= min()"
+    [attr.aria-label]="'Decrease quantity of ' + productName()"
+    (click)="decrease.emit()"
+  >
+    <span aria-hidden="true">−</span>
+  </button>
+
+  <output aria-live="polite" [attr.aria-label]="'Quantity ' + quantity()">
+    {{ quantity() }}
+  </output>
+
+  <button
+    type="button"
+    [disabled]="disabled() || quantity() >= max()"
+    [attr.aria-label]="'Increase quantity of ' + productName()"
+    (click)="increase.emit()"
+  >
+    <span aria-hidden="true">+</span>
+  </button>
+</div>

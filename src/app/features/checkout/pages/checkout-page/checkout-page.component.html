@@ -1,0 +1,306 @@
+<div class="checkout-page content-container">
+  <a class="back-link" routerLink="/cart">
+    <span aria-hidden="true">←</span>
+    Back to Cart
+  </a>
+
+  <header>
+    <p>Almost there</p>
+    <h1>Delivery Details</h1>
+  </header>
+
+  @if (submitted() && form.invalid) {
+    <div
+      #errorSummary
+      class="error-summary"
+      role="alert"
+      tabindex="-1"
+    >
+      <h2>Please check your delivery details</h2>
+      <p>Complete all required fields before placing your order.</p>
+    </div>
+  }
+
+  @if (submissionError()) {
+    <div class="submission-error" role="alert">
+      <div>
+        <h2>We couldn't place your order</h2>
+        <p>Your cart and delivery details are unchanged. Please try again.</p>
+      </div>
+      <button type="button" (click)="placeOrder()">Try Again</button>
+    </div>
+  }
+
+  <form
+    class="checkout-layout"
+    [formGroup]="form"
+    (ngSubmit)="placeOrder()"
+    [attr.aria-busy]="submitting()"
+    novalidate
+  >
+    <div class="checkout-form">
+      <section aria-labelledby="address-heading">
+        <div class="section-heading">
+          <span aria-hidden="true">1</span>
+          <div>
+            <h2 id="address-heading">Delivery address</h2>
+            <p>Tell us exactly where to bring your bowls.</p>
+          </div>
+        </div>
+
+        @if (apartmentState() === 'loading') {
+          <div class="inline-state" role="status">
+            Loading available apartments…
+          </div>
+        } @else if (apartmentState() === 'error') {
+          <div class="inline-state inline-state--error" role="alert">
+            <p>We couldn't load apartments.</p>
+            <button type="button" (click)="loadApartments()">Try Again</button>
+          </div>
+        } @else if (apartmentState() === 'empty') {
+          <div class="inline-state" role="status">
+            Delivery is not available at any apartment today.
+          </div>
+        } @else {
+          <div class="field">
+            <label for="apartment">Apartment</label>
+            <select
+              id="apartment"
+              formControlName="apartmentId"
+              aria-describedby="apartment-error"
+              [attr.aria-invalid]="
+                form.controls.apartmentId.invalid &&
+                form.controls.apartmentId.touched
+              "
+            >
+              @for (apartment of apartments(); track apartment.id) {
+                <option [value]="apartment.id">{{ apartment.name }}</option>
+              }
+            </select>
+            @if (
+              form.controls.apartmentId.invalid &&
+              form.controls.apartmentId.touched
+            ) {
+              <p id="apartment-error" class="field-error">
+                Select an apartment.
+              </p>
+            }
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="block">Block</label>
+              <select
+                id="block"
+                formControlName="block"
+                aria-describedby="block-error"
+                [attr.aria-invalid]="
+                  form.controls.block.invalid && form.controls.block.touched
+                "
+              >
+                <option value="">Select block</option>
+                @for (block of selectedApartment()?.blocks ?? []; track block) {
+                  <option [value]="block">{{ block }}</option>
+                }
+              </select>
+              @if (
+                form.controls.block.invalid && form.controls.block.touched
+              ) {
+                <p id="block-error" class="field-error">Select your block.</p>
+              }
+            </div>
+
+            <div class="field">
+              <label for="flat-number">Flat number</label>
+              <input
+                id="flat-number"
+                type="text"
+                formControlName="flatNumber"
+                autocomplete="address-line2"
+                maxlength="20"
+                aria-describedby="flat-number-hint flat-number-error"
+                [attr.aria-invalid]="
+                  form.controls.flatNumber.invalid &&
+                  form.controls.flatNumber.touched
+                "
+              />
+              <p id="flat-number-hint" class="field-hint">
+                For example, 504 or B-12.
+              </p>
+              @if (
+                form.controls.flatNumber.invalid &&
+                form.controls.flatNumber.touched
+              ) {
+                <p id="flat-number-error" class="field-error">
+                  Enter a valid flat number using up to 20 letters or numbers.
+                </p>
+              }
+            </div>
+          </div>
+        }
+      </section>
+
+      <section aria-labelledby="slot-heading">
+        <div class="section-heading">
+          <span aria-hidden="true">2</span>
+          <div>
+            <h2 id="slot-heading">Delivery time</h2>
+            <p>Choose an available time for today.</p>
+          </div>
+        </div>
+
+        @if (slotState() === 'loading') {
+          <div class="inline-state" role="status">
+            Loading today's delivery times…
+          </div>
+        } @else if (slotState() === 'error') {
+          <div class="inline-state inline-state--error" role="alert">
+            <p>We couldn't load delivery times.</p>
+            <button type="button" (click)="retrySlots()">Try Again</button>
+          </div>
+        } @else if (slotState() === 'empty') {
+          <div class="inline-state" role="status">
+            {{
+              selectedApartment()
+                ? 'No delivery times are available for this apartment today.'
+                : 'Choose an apartment to see available delivery times.'
+            }}
+          </div>
+        } @else {
+          <fieldset
+            class="radio-group"
+            aria-describedby="delivery-slot-error"
+          >
+            <legend class="visually-hidden">Delivery time</legend>
+            @for (slot of slots(); track slot.id) {
+              <label>
+                <input
+                  type="radio"
+                  formControlName="deliverySlotId"
+                  [value]="slot.id"
+                />
+                <span>
+                  {{
+                    slot.startsAt | date: 'h:mm a' : '+0530'
+                  }}
+                  –
+                  {{ slot.endsAt | date: 'h:mm a' : '+0530' }}
+                </span>
+              </label>
+            }
+          </fieldset>
+          @if (
+            form.controls.deliverySlotId.invalid &&
+            form.controls.deliverySlotId.touched
+          ) {
+            <p id="delivery-slot-error" class="field-error">
+              Select a delivery time.
+            </p>
+          }
+        }
+      </section>
+
+      <section aria-labelledby="payment-heading">
+        <div class="section-heading">
+          <span aria-hidden="true">3</span>
+          <div>
+            <h2 id="payment-heading">Payment method</h2>
+            <p>Choose how you would like to pay.</p>
+          </div>
+        </div>
+
+        <fieldset class="payment-options" aria-describedby="payment-error">
+          <legend class="visually-hidden">Payment method</legend>
+          <label>
+            <input
+              type="radio"
+              formControlName="paymentMethod"
+              value="CASH"
+            />
+            <span>
+              <strong>Cash</strong>
+              Pay when your order is delivered.
+            </span>
+          </label>
+          <label>
+            <input
+              type="radio"
+              formControlName="paymentMethod"
+              value="UPI"
+            />
+            <span>
+              <strong>UPI</strong>
+              Mock selection only. No real payment or UPI PIN is requested.
+            </span>
+          </label>
+        </fieldset>
+        @if (
+          form.controls.paymentMethod.invalid &&
+          form.controls.paymentMethod.touched
+        ) {
+          <p id="payment-error" class="field-error">
+            Select a payment method.
+          </p>
+        }
+      </section>
+    </div>
+
+    <aside class="order-summary" aria-labelledby="order-summary-heading">
+      <h2 id="order-summary-heading">Order summary</h2>
+      <ul>
+        @for (item of cart.items(); track item.salad.id) {
+          <li>
+            <span>{{ item.quantity }} × {{ item.salad.name }}</span>
+            <strong>
+              {{
+                item.salad.pricePaise * item.quantity / 100
+                  | currency: 'INR' : 'symbol' : '1.0-0'
+              }}
+            </strong>
+          </li>
+        }
+      </ul>
+      <dl>
+        <div>
+          <dt>Subtotal</dt>
+          <dd>
+            {{
+              cart.totals().subtotalPaise / 100
+                | currency: 'INR' : 'symbol' : '1.0-0'
+            }}
+          </dd>
+        </div>
+        <div>
+          <dt>Delivery</dt>
+          <dd>
+            {{
+              cart.totals().deliveryChargePaise / 100
+                | currency: 'INR' : 'symbol' : '1.0-0'
+            }}
+          </dd>
+        </div>
+        <div class="order-summary__total">
+          <dt>Total</dt>
+          <dd>
+            {{
+              cart.totals().totalPaise / 100
+                | currency: 'INR' : 'symbol' : '1.0-0'
+            }}
+          </dd>
+        </div>
+      </dl>
+
+      <button
+        type="submit"
+        [disabled]="
+          submitting() ||
+          apartmentState() !== 'loaded' ||
+          slotState() !== 'loaded'
+        "
+      >
+        {{ submitting() ? 'Placing Order…' : 'Place Order' }}
+      </button>
+      <p>Your order is created only after successful confirmation.</p>
+    </aside>
+  </form>
+</div>

@@ -1,0 +1,17 @@
+<main class="not-found">
+  <div class="not-found__content">
+    <a class="brand" routerLink="/home">Healthy<span>Bowl</span></a>
+    <p class="not-found__code" aria-hidden="true">404</p>
+    <h1>We couldn't find that page.</h1>
+    <p>
+      The page may have moved, or the address may be incorrect. You can return
+      to a safe place below.
+    </p>
+    <div class="not-found__actions">
+      <a class="button button--primary" routerLink="/home">Back to Home</a>
+      <button class="button button--secondary" type="button" (click)="goBack()">
+        Go Back
+      </button>
+    </div>
+  </div>
+</main>

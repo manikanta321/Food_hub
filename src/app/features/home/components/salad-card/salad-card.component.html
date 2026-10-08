@@ -1,0 +1,71 @@
+<article class="salad-card">
+  <div class="salad-card__image">
+    <a
+      class="salad-card__image-link"
+      [routerLink]="['/salads', salad().id]"
+      [attr.aria-label]="'View details for ' + salad().name"
+    >
+      <img
+        [ngSrc]="salad().image.url"
+        [alt]="salad().image.alt"
+        width="1024"
+        height="768"
+      />
+    </a>
+    <span
+      class="availability"
+      [class.availability--unavailable]="!salad().available"
+    >
+      <span aria-hidden="true"></span>
+      {{ salad().available ? 'Available today' : 'Unavailable today' }}
+    </span>
+  </div>
+
+  <div class="salad-card__content">
+    <div class="salad-card__heading">
+      <h3>
+        <a [routerLink]="['/salads', salad().id]">{{ salad().name }}</a>
+      </h3>
+      <p class="salad-card__price">
+        {{ salad().pricePaise / 100 | currency: 'INR' : 'symbol' : '1.0-0' }}
+      </p>
+    </div>
+
+    <p class="salad-card__description">{{ salad().description }}</p>
+
+    <ul class="ingredients" aria-label="Main ingredients">
+      @for (ingredient of featuredIngredients(); track ingredient) {
+        <li>{{ ingredient }}</li>
+      }
+      @if (remainingIngredientCount() > 0) {
+        <li>+{{ remainingIngredientCount() }} more</li>
+      }
+    </ul>
+
+    <div class="salad-card__action">
+      <a
+        class="salad-card__details-link"
+        [routerLink]="['/salads', salad().id]"
+      >
+        View Details
+      </a>
+      <button
+        type="button"
+        [disabled]="!salad().available"
+        (click)="addToCart()"
+        [attr.aria-label]="'Add ' + salad().name + ' to cart'"
+        [attr.aria-describedby]="availabilityDescriptionId()"
+      >
+        Add
+        <span aria-hidden="true">+</span>
+      </button>
+      <p [id]="availabilityDescriptionId()">
+        {{
+          salad().available
+            ? 'Adds one bowl to your cart.'
+            : 'This salad cannot be ordered today.'
+        }}
+      </p>
+    </div>
+  </div>
+</article>

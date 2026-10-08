@@ -1,0 +1,188 @@
+:host {
+  display: block;
+}
+
+.confirmation-page {
+  min-height: calc(100vh - var(--header-height));
+  display: grid;
+  place-items: start center;
+  padding-block: var(--space-8) var(--space-16);
+}
+
+.confirmation-card,
+.confirmation-state {
+  width: 100%;
+  max-width: 42rem;
+  display: grid;
+  justify-items: center;
+  padding: clamp(1.5rem, 6vw, 3.5rem);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+  text-align: center;
+}
+
+.confirmation-card__check,
+.confirmation-state__symbol {
+  width: 4.5rem;
+  height: 4.5rem;
+  display: grid;
+  place-items: center;
+  margin-bottom: var(--space-4);
+  border-radius: 50%;
+  color: var(--color-surface);
+  background: var(--color-brand-700);
+  font-size: 2rem;
+  font-weight: 900;
+}
+
+.confirmation-card__eyebrow {
+  margin: 0 0 var(--space-2);
+  color: var(--color-brand-700);
+  font-size: 0.75rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.confirmation-card h1,
+.confirmation-state h1 {
+  margin: 0;
+  font-size: clamp(2rem, 8vw, 3.25rem);
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+}
+
+.confirmation-card__message,
+.confirmation-state p {
+  margin: var(--space-4) 0 0;
+  color: var(--color-text-muted);
+}
+
+.confirmation-card__slot {
+  margin: var(--space-1) 0 var(--space-6);
+  color: var(--color-brand-700);
+  font-size: var(--font-size-xl);
+  font-weight: 900;
+}
+
+.confirmation-card dl {
+  width: 100%;
+  display: grid;
+  gap: var(--space-3);
+  margin: 0;
+  padding: var(--space-5);
+  border-radius: var(--radius-control);
+  background: var(--color-brand-50);
+  text-align: left;
+}
+
+.confirmation-card dl div {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.confirmation-card dt {
+  color: var(--color-text-muted);
+}
+
+.confirmation-card dd {
+  max-width: 65%;
+  margin: 0;
+  font-weight: 800;
+  overflow-wrap: anywhere;
+  text-align: right;
+}
+
+.confirmation-card .confirmation-card__total {
+  margin-top: var(--space-2);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-border);
+  color: var(--color-text);
+  font-size: var(--font-size-lg);
+}
+
+.confirmation-card__actions,
+.confirmation-state__actions {
+  width: 100%;
+  display: grid;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+}
+
+.confirmation-card__actions button,
+.confirmation-card__actions a,
+.confirmation-state button,
+.confirmation-state a,
+.primary-link {
+  min-height: 3rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-3) var(--space-5);
+  border: 1px solid var(--color-brand-700);
+  border-radius: var(--radius-control);
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.confirmation-card__actions button {
+  color: var(--color-text-muted);
+  border-color: var(--color-brand-100);
+  background: var(--color-brand-100);
+  cursor: not-allowed;
+}
+
+.confirmation-card__actions a,
+.confirmation-state button,
+.primary-link {
+  color: var(--color-surface);
+  background: var(--color-brand-700);
+}
+
+.confirmation-state button {
+  cursor: pointer;
+}
+
+.confirmation-state__actions a {
+  color: var(--color-brand-700);
+  background: var(--color-surface);
+}
+
+.confirmation-card__note {
+  margin: var(--space-2) 0 0;
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+}
+
+.confirmation-state__loader {
+  width: 3rem;
+  height: 3rem;
+  margin-bottom: var(--space-4);
+  border: 0.25rem solid var(--color-brand-100);
+  border-top-color: var(--color-brand-700);
+  border-radius: 50%;
+  animation: confirmation-spin 800ms linear infinite;
+}
+
+@keyframes confirmation-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (min-width: 48rem) {
+  .confirmation-card__actions,
+  .confirmation-state__actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .confirmation-state__loader {
+    animation: none;
+  }
+}

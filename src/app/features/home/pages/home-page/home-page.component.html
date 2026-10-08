@@ -1,0 +1,99 @@
+<section class="hero">
+  <div class="hero__content content-container">
+    <div class="hero__copy">
+      <p class="hero__eyebrow">
+        <span aria-hidden="true"></span>
+        Made fresh in your community
+      </p>
+      <h1>Fresh &amp; Healthy Salads</h1>
+      <p class="hero__tagline">Delivered to Your Apartment.</p>
+      <p class="hero__summary">
+        Wholesome bowls made with crisp vegetables, satisfying proteins and
+        lighter dressings—prepared fresh for your day.
+      </p>
+      <a class="hero__action" href="#todays-salads">See today's salads</a>
+    </div>
+
+    <div class="hero__visual">
+      <div class="hero__image">
+        <img
+          ngSrc="/images/protein-power-salad.jpg"
+          alt="Fresh paneer salad prepared with crisp vegetables"
+          width="1024"
+          height="768"
+          priority
+        />
+      </div>
+      <div class="hero__badge">
+        <span aria-hidden="true">✓</span>
+        <p><strong>Made fresh</strong> for today's delivery</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="delivery-context" aria-label="Delivery location">
+  <div class="delivery-context__content content-container">
+    <span class="delivery-context__icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24">
+        <path
+          d="M12 21s7-6.18 7-12A7 7 0 1 0 5 9c0 5.82 7 12 7 12Zm0-9a3 3 0 1 1 0-6 3 3 0 0 1 0 6Z"
+        />
+      </svg>
+    </span>
+    <div>
+      <p>Delivering to</p>
+      <strong>Your apartment community</strong>
+    </div>
+    <span class="delivery-context__note">Choose your apartment at checkout</span>
+  </div>
+</section>
+
+<section id="todays-salads" class="catalog">
+  <div class="content-container">
+    <div class="catalog__heading">
+      <div>
+        <p class="catalog__eyebrow">Freshly prepared</p>
+        <h2>Today's salads</h2>
+      </div>
+      <p>Simple ingredients. Big flavour. Made for a better lunch.</p>
+    </div>
+
+    @if (catalogState() === 'loading') {
+      <div class="catalog-state" role="status" aria-live="polite">
+        <span class="visually-hidden">Loading today's salads</span>
+        <div class="skeleton-grid" aria-hidden="true">
+          @for (item of [1, 2]; track item) {
+            <div class="skeleton-card">
+              <span class="skeleton-card__image"></span>
+              <span class="skeleton-card__title"></span>
+              <span class="skeleton-card__line"></span>
+              <span class="skeleton-card__line skeleton-card__line--short"></span>
+            </div>
+          }
+        </div>
+      </div>
+    } @else if (catalogState() === 'error') {
+      <div class="catalog-message" role="alert">
+        <span class="catalog-message__icon" aria-hidden="true">!</span>
+        <h3>We couldn't load today's salads.</h3>
+        <p>Please check your connection and try again.</p>
+        <button type="button" (click)="loadCatalog()">Try Again</button>
+      </div>
+    } @else if (salads().length === 0) {
+      <div class="catalog-message">
+        <span class="catalog-message__icon" aria-hidden="true">○</span>
+        <h3>No salads available today.</h3>
+        <p>Please check again later.</p>
+      </div>
+    } @else {
+      <div class="salad-grid">
+        @for (salad of salads(); track salad.id) {
+          <app-salad-card [salad]="salad" (add)="addToCart($event)" />
+        }
+      </div>
+    }
+  </div>
+</section>
+
+<p class="visually-hidden" aria-live="polite">{{ cart.announcement() }}</p>

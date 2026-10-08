@@ -1,0 +1,38 @@
+<header class="header">
+  <div class="header__content content-container">
+    <a class="brand" routerLink="/home" aria-label="HealthyBowl home">
+      <span class="brand__mark" aria-hidden="true">
+        <span class="brand__leaf"></span>
+      </span>
+      <span class="brand__name">Healthy<span>Bowl</span></span>
+    </a>
+
+    <p class="header__tagline">Fresh &amp; Healthy. Delivered to Your Apartment.</p>
+
+    <nav class="desktop-navigation" aria-label="Primary navigation">
+      <a
+        routerLink="/home"
+        routerLinkActive="desktop-navigation__link--active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        ariaCurrentWhenActive="page"
+      >
+        Home
+      </a>
+      <a
+        routerLink="/cart"
+        routerLinkActive="desktop-navigation__link--active"
+        ariaCurrentWhenActive="page"
+      >
+        Cart
+        @if (cart.itemCount() > 0) {
+          <span
+            class="navigation-count"
+            [attr.aria-label]="cart.itemCount() + ' items in cart'"
+          >
+            {{ cart.itemCount() }}
+          </span>
+        }
+      </a>
+    </nav>
+  </div>
+</header>
